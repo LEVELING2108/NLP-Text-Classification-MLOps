@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 
-import api.main as main_api
+from api import main as main_api
 
 
 class DummyPipeline:
@@ -30,4 +30,3 @@ def test_predict_validation_error():
     client = TestClient(main_api.app)
     response = client.post("/predict", json={"text": "x"})
     assert response.status_code == 422
-
