@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 
-from api import main as main_api
+import api.main as main_api
 
 
 class DummyPipeline:
