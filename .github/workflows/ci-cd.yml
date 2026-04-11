@@ -1,0 +1,41 @@
+name: CI-CD
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Unit Tests
+        run: pytest -q
+
+      - name: Train Model
+        run: python pipelines/run_train.py --config configs/config.yaml
+
+      - name: Build Docker Image
+        run: docker build -t nlp-mlops-api:${{ github.sha }} .
+
+      - name: Local Deployment Smoke Test
+        run: |
+          docker run -d --name nlp-api -p 8000:8000 nlp-mlops-api:${{ github.sha }}
+          sleep 8
+          curl --fail http://localhost:8000/health
+          docker rm -f nlp-api
+

@@ -1,0 +1,38 @@
+version: "3.9"
+
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: nlp-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../models:/app/models
+      - ../configs:/app/configs
+      - ../mlflow.db:/app/mlflow.db
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: nlp-prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    depends_on:
+      - api
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: nlp-grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    depends_on:
+      - prometheus
+

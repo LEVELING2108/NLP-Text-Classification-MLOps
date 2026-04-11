@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.idea/
+.venv/
+venv/
+mlruns/
+mlflow.db
+models/*/
+!models/.gitkeep
+

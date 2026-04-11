@@ -1,0 +1,22 @@
+text,label
+"Congratulations! You won a free iPhone. Click now!",spam
+"Meeting at 3 PM, please bring the report.",ham
+"Exclusive deal just for you. Claim your cash reward today.",spam
+"Can we reschedule the call to tomorrow morning?",ham
+"You have been selected for a lottery prize. Reply WIN.",spam
+"Please review the attached project document.",ham
+"URGENT: Your account is suspended. Verify immediately.",spam
+"Let's have lunch together after the client meeting.",ham
+"Get rich fast with this one secret method.",spam
+"Your order has been shipped and will arrive by Friday.",ham
+"Limited-time offer! Buy one get one free now.",spam
+"Thanks for your support on the last deployment.",ham
+"Act now to avoid service interruption.",spam
+"Please send the updated budget sheet by EOD.",ham
+"Cheap medicines available without prescription.",spam
+"Happy birthday! Wishing you a wonderful year ahead.",ham
+"Earn money from home with zero experience.",spam
+"The sprint retrospective is moved to 5 PM.",ham
+"Winner! Collect your voucher before it expires.",spam
+"I have shared the interview feedback in the tracker.",ham
+

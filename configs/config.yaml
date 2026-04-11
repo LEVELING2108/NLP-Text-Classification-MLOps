@@ -1,0 +1,39 @@
+project:
+  name: "nlp-text-classifier-mlops"
+  task: "spam-detection"
+
+data:
+  raw_path: "data/raw/spam_dataset.csv"
+  text_column: "text"
+  target_column: "label"
+  test_size: 0.2
+  random_state: 42
+
+model:
+  type: "logistic_regression"
+  C: 1.0
+  max_iter: 300
+  ngram_min: 1
+  ngram_max: 2
+  min_df: 1
+
+artifacts:
+  model_dir: "models"
+  model_name: "classifier.joblib"
+  vectorizer_name: "vectorizer.joblib"
+  metadata_name: "metadata.json"
+
+tracking:
+  mlflow_uri: "sqlite:///mlflow.db"
+  experiment_name: "nlp-text-classification"
+  run_name: "baseline-run"
+
+api:
+  title: "NLP Text Classification API"
+  version: "1.0.0"
+  description: "Production-grade NLP classifier API with MLOps pipeline."
+
+monitoring:
+  enable_prometheus: true
+  log_level: "INFO"
+
