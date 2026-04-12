@@ -43,6 +43,20 @@ app = FastAPI(
 )
 
 
+@app.get("/")
+def root() -> JSONResponse:
+    return JSONResponse(
+        {
+            "service": APP_CONFIG.api.title,
+            "version": APP_CONFIG.api.version,
+            "docs": "/docs",
+            "health": "/health",
+            "predict": "/predict",
+            "metrics": "/metrics" if PROMETHEUS_ENABLED else "disabled",
+        }
+    )
+
+
 @app.middleware("http")
 async def metrics_middleware(request: Request, call_next):
     start = perf_counter()

@@ -212,6 +212,12 @@ You can override key runtime settings without editing `configs/config.yaml`:
 
 ## 5. API Endpoints
 
+Live deployment:
+- `https://nlp-text-classification-mlops.onrender.com`
+
+### `GET /`
+- Returns API service metadata and quick links.
+
 ### `GET /health`
 - Returns service health and model load status.
 
@@ -233,6 +239,18 @@ You can override key runtime settings without editing `configs/config.yaml`:
 ### `GET /metrics`
 - Prometheus metrics endpoint.
 - Includes request count, latency histogram, and prediction counters.
+
+### 5.1 Quick Live Checks
+
+```bash
+curl https://nlp-text-classification-mlops.onrender.com/
+curl https://nlp-text-classification-mlops.onrender.com/health
+curl https://nlp-text-classification-mlops.onrender.com/docs
+curl https://nlp-text-classification-mlops.onrender.com/metrics
+curl -X POST "https://nlp-text-classification-mlops.onrender.com/predict" \
+  -H "Content-Type: application/json" \
+  -d '{"text":"Congratulations, you won free cash now"}'
+```
 
 ## 6. CI/CD (GitHub Actions)
 
