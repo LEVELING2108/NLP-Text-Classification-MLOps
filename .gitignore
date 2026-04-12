@@ -8,4 +8,4 @@ mlruns/
 mlflow.db
 models/*/
 !models/.gitkeep
-
+models/latest.json

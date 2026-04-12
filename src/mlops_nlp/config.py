@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 import yaml
@@ -62,8 +63,25 @@ class AppConfig(BaseModel):
     monitoring: MonitoringConfig
 
 
+def _parse_bool(value: str) -> bool:
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
 def load_config(config_path: str | Path = "configs/config.yaml") -> AppConfig:
     with Path(config_path).open("r", encoding="utf-8") as file:
         raw = yaml.safe_load(file)
-    return AppConfig.model_validate(raw)
+    config = AppConfig.model_validate(raw)
 
+    mlflow_uri = os.getenv("MLOPS_MLFLOW_URI")
+    if mlflow_uri:
+        config.tracking.mlflow_uri = mlflow_uri
+
+    log_level = os.getenv("MLOPS_LOG_LEVEL")
+    if log_level:
+        config.monitoring.log_level = log_level
+
+    enable_prometheus = os.getenv("MLOPS_ENABLE_PROMETHEUS")
+    if enable_prometheus is not None:
+        config.monitoring.enable_prometheus = _parse_bool(enable_prometheus)
+
+    return config

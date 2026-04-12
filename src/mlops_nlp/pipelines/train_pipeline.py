@@ -47,6 +47,8 @@ def run_train_pipeline(config_path: str | Path = "configs/config.yaml") -> Dict[
     model.fit(x_train_vec, y_train)
     predictions = model.predict(x_test_vec)
     metrics = evaluate_model(y_test, predictions)
+    model_input_example = x_test_vec[:2].toarray()
+    model_output_example = model.predict(x_test_vec[:2])
 
     model_version = make_model_version()
     metadata = {
@@ -71,6 +73,8 @@ def run_train_pipeline(config_path: str | Path = "configs/config.yaml") -> Dict[
         model=model,
         vectorizer=vectorizer,
         metadata=metadata,
+        model_input_example=model_input_example,
+        model_output_example=model_output_example,
     )
 
     metadata["mlflow_run_id"] = run_id

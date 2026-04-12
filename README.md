@@ -190,6 +190,23 @@ docker compose up --build
 - Prometheus: `http://localhost:9090`
 - Grafana: `http://localhost:3000` (default `admin/admin`)
 
+### 4.6 Common Commands (Makefile)
+
+```bash
+make install-dev
+make test
+make train
+make serve
+```
+
+### 4.7 Environment Overrides
+
+You can override key runtime settings without editing `configs/config.yaml`:
+
+- `MLOPS_MLFLOW_URI` (example: `sqlite:///mlflow.db` or remote tracking URI)
+- `MLOPS_LOG_LEVEL` (example: `DEBUG`, `INFO`, `WARNING`)
+- `MLOPS_ENABLE_PROMETHEUS` (`true`/`false`, `1`/`0`, `yes`/`no`)
+
 ## 5. API Endpoints
 
 ### `GET /health`
@@ -248,10 +265,16 @@ Included tests:
 
 ## 9. Optional Cloud Deployment
 
+Recommended first target: **Render** for quick managed deployment.
+
 ### Render
 - Create a Web Service from this repo.
 - Build command: `pip install -r requirements.txt`
 - Start command: `uvicorn api.main:app --host 0.0.0.0 --port $PORT`
+- Optional env vars:
+  - `MLOPS_MLFLOW_URI`
+  - `MLOPS_LOG_LEVEL`
+  - `MLOPS_ENABLE_PROMETHEUS`
 
 ### AWS EC2
 - Install Docker and Docker Compose on instance.

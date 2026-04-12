@@ -7,6 +7,7 @@ from typing import Dict
 import joblib
 import mlflow
 import mlflow.sklearn
+from mlflow.models import infer_signature
 
 from mlops_nlp.config import AppConfig
 
@@ -23,11 +24,19 @@ def log_run(
     model,
     vectorizer,
     metadata: Dict[str, object],
+    model_input_example,
+    model_output_example,
 ) -> str:
     with mlflow.start_run(run_name=config.tracking.run_name) as run:
         mlflow.log_params(params)
         mlflow.log_metrics(metrics)
-        mlflow.sklearn.log_model(model, artifact_path="model")
+        signature = infer_signature(model_input_example, model_output_example)
+        mlflow.sklearn.log_model(
+            model,
+            artifact_path="model",
+            signature=signature,
+            input_example=model_input_example,
+        )
         metadata_with_run = dict(metadata)
         metadata_with_run["mlflow_run_id"] = run.info.run_id
         mlflow.log_dict(metadata_with_run, "inference_bundle/metadata.json")
