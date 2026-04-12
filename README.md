@@ -127,6 +127,7 @@ tests -> train -> docker build -> local smoke deploy
 │   ├── test_preprocessing.py
 │   └── test_train_pipeline.py
 ├── Dockerfile
+├── requirements-dev.txt
 ├── pytest.ini
 ├── requirements.txt
 └── README.md
@@ -149,6 +150,11 @@ tests -> train -> docker build -> local smoke deploy
 ```bash
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
+pip install -r requirements-dev.txt
+```
+
+For production/runtime-only installs (for example inside Docker), use:
+```bash
 pip install -r requirements.txt
 ```
 
