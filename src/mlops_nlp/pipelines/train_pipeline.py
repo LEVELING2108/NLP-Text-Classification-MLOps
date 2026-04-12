@@ -48,6 +48,14 @@ def run_train_pipeline(config_path: str | Path = "configs/config.yaml") -> Dict[
     predictions = model.predict(x_test_vec)
     metrics = evaluate_model(y_test, predictions)
 
+    model_version = make_model_version()
+    metadata = {
+        "project_name": config.project.name,
+        "trained_at_utc": datetime.now(timezone.utc).isoformat(),
+        "model_version": model_version,
+        "metrics": metrics,
+    }
+
     init_mlflow(config)
     run_id = log_run(
         config=config,
@@ -61,15 +69,11 @@ def run_train_pipeline(config_path: str | Path = "configs/config.yaml") -> Dict[
         },
         metrics=metrics,
         model=model,
+        vectorizer=vectorizer,
+        metadata=metadata,
     )
 
-    metadata = {
-        "project_name": config.project.name,
-        "trained_at_utc": datetime.now(timezone.utc).isoformat(),
-        "model_version": make_model_version(),
-        "mlflow_run_id": run_id,
-        "metrics": metrics,
-    }
+    metadata["mlflow_run_id"] = run_id
     model_path, vectorizer_path, metadata_path = save_artifacts(config, model, vectorizer, metadata)
 
     LOGGER.info("Training complete with metrics: %s", metrics)
@@ -80,4 +84,3 @@ def run_train_pipeline(config_path: str | Path = "configs/config.yaml") -> Dict[
         "metadata_path": metadata_path,
         "run_id": run_id,
     }
-

@@ -12,10 +12,12 @@ from mlops_nlp.logging_config import configure_logging, get_logger
 from mlops_nlp.pipelines.inference_pipeline import InferencePipeline
 from mlops_nlp.schemas import PredictionRequest, PredictionResponse
 
+APP_CONFIG = load_config()
 LOGGER = get_logger(__name__)
 REQUEST_COUNT = Counter("api_requests_total", "Total API requests", ["path", "method", "status"])
 PREDICTION_COUNT = Counter("prediction_total", "Total inference predictions", ["prediction"])
 REQUEST_LATENCY = Histogram("request_latency_seconds", "HTTP request latency", ["path", "method"])
+PROMETHEUS_ENABLED = APP_CONFIG.monitoring.enable_prometheus
 
 pipeline: InferencePipeline | None = None
 
@@ -23,8 +25,7 @@ pipeline: InferencePipeline | None = None
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global pipeline
-    config = load_config()
-    configure_logging(config.monitoring.log_level)
+    configure_logging(APP_CONFIG.monitoring.log_level)
     try:
         pipeline = InferencePipeline()
         LOGGER.info("Loaded inference pipeline successfully")
@@ -35,9 +36,9 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title=load_config().api.title,
-    version=load_config().api.version,
-    description=load_config().api.description,
+    title=APP_CONFIG.api.title,
+    version=APP_CONFIG.api.version,
+    description=APP_CONFIG.api.description,
     lifespan=lifespan,
 )
 
@@ -46,6 +47,8 @@ app = FastAPI(
 async def metrics_middleware(request: Request, call_next):
     start = perf_counter()
     response = await call_next(request)
+    if not PROMETHEUS_ENABLED:
+        return response
     latency = perf_counter() - start
 
     path = request.url.path
@@ -67,11 +70,13 @@ def predict(payload: PredictionRequest) -> PredictionResponse:
     if pipeline is None:
         raise HTTPException(status_code=503, detail="Model is not loaded. Train model first.")
     prediction = pipeline.predict(payload.text)
-    PREDICTION_COUNT.labels(prediction=prediction).inc()
+    if PROMETHEUS_ENABLED:
+        PREDICTION_COUNT.labels(prediction=prediction).inc()
     return PredictionResponse(prediction=prediction, model_version=pipeline.metadata["model_version"])
 
 
 @app.get("/metrics")
 def metrics() -> PlainTextResponse:
+    if not PROMETHEUS_ENABLED:
+        raise HTTPException(status_code=404, detail="Prometheus metrics are disabled.")
     return PlainTextResponse(generate_latest().decode("utf-8"), media_type=CONTENT_TYPE_LATEST)
-
