@@ -179,6 +179,9 @@ docker build -t nlp-mlops-api:latest .
 docker run -p 8000:8000 nlp-mlops-api:latest
 ```
 
+Note: the Docker image runs one training step during build so deployed containers
+start with ready model artifacts (`models/latest.json` + versioned bundle).
+
 ### 4.5 Run Full Stack (API + Prometheus + Grafana)
 
 ```bash
@@ -275,6 +278,9 @@ Recommended first target: **Render** for quick managed deployment.
   - `MLOPS_MLFLOW_URI`
   - `MLOPS_LOG_LEVEL`
   - `MLOPS_ENABLE_PROMETHEUS`
+
+If using Docker deploy on Render, no extra training step is needed at runtime:
+the image build already produces model artifacts.
 
 ### AWS EC2
 - Install Docker and Docker Compose on instance.
