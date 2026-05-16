@@ -293,7 +293,7 @@ Included tests:
 - Structured logging configured via `src/mlops_nlp/logging_config.py`.
 - Prometheus metrics exported from `api/main.py`.
 - Grafana datasource provisioning file included.
-- Dashboard JSON can be added later under `deployment/grafana/provisioning/`.
+- **Detailed Monitoring & Drift Guide:** See [deployment/MONITORING.md](deployment/MONITORING.md).
 
 ## 9. Optional Cloud Deployment
 
