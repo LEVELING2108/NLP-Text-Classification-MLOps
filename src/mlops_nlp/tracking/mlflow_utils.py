@@ -36,6 +36,7 @@ def log_run(
             artifact_path="model",
             signature=signature,
             input_example=model_input_example,
+            registered_model_name=config.tracking.registered_model_name,
         )
         metadata_with_run = dict(metadata)
         metadata_with_run["mlflow_run_id"] = run.info.run_id

@@ -27,6 +27,7 @@ tracking:
   mlflow_uri: "sqlite:///mlflow.db"
   experiment_name: "nlp-text-classification"
   run_name: "baseline-run"
+  registered_model_name: "spam-classifier"
 
 api:
   title: "NLP Text Classification API"
@@ -36,4 +37,5 @@ api:
 monitoring:
   enable_prometheus: true
   log_level: "INFO"
+  inference_log_path: "data/logs/inference.jsonl"
 

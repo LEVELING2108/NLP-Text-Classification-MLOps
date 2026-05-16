@@ -316,9 +316,4 @@ the image build already produces model artifacts.
 - Clone repo and run `docker compose -f deployment/docker-compose.yml up --build -d`.
 - Expose ports `8000`, `9090`, and `3000` via Security Group.
 
-## 10. Screenshots Placeholders
 
-- `[PLACEHOLDER]` MLflow experiment UI screenshot
-- `[PLACEHOLDER]` FastAPI `/docs` screenshot
-- `[PLACEHOLDER]` Prometheus targets screenshot
-- `[PLACEHOLDER]` Grafana dashboard screenshot

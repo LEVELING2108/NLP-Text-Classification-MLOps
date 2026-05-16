@@ -11,6 +11,7 @@ from mlops_nlp.config import load_config
 from mlops_nlp.logging_config import configure_logging, get_logger
 from mlops_nlp.pipelines.inference_pipeline import InferencePipeline
 from mlops_nlp.schemas import PredictionRequest, PredictionResponse
+from mlops_nlp.utils.drift import log_inference
 
 APP_CONFIG = load_config()
 LOGGER = get_logger(__name__)
@@ -86,6 +87,16 @@ def predict(payload: PredictionRequest) -> PredictionResponse:
     prediction, confidence = pipeline.predict(payload.text)
     if PROMETHEUS_ENABLED:
         PREDICTION_COUNT.labels(prediction=prediction).inc()
+    
+    # Log for drift detection
+    log_inference(
+        log_path=APP_CONFIG.monitoring.inference_log_path,
+        text=payload.text,
+        prediction=prediction,
+        confidence=confidence,
+        model_version=pipeline.metadata["model_version"],
+    )
+    
     return PredictionResponse(
         prediction=prediction, 
         confidence=confidence,

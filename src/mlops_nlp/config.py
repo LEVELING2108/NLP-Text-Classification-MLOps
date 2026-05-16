@@ -42,6 +42,7 @@ class TrackingConfig(BaseModel):
     mlflow_uri: str
     experiment_name: str
     run_name: str
+    registered_model_name: str | None = None
 
 
 class ApiConfig(BaseModel):
@@ -53,6 +54,7 @@ class ApiConfig(BaseModel):
 class MonitoringConfig(BaseModel):
     enable_prometheus: bool = True
     log_level: str = "INFO"
+    inference_log_path: str = "data/logs/inference.jsonl"
 
 
 class AppConfig(BaseModel):

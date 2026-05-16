@@ -49,6 +49,7 @@ def test_train_pipeline_end_to_end(tmp_path: Path):
             "mlflow_uri": f"sqlite:///{tmp_path / 'mlflow.db'}",
             "experiment_name": "unit-test-exp",
             "run_name": "unit-test-run",
+            "registered_model_name": "test-model",
         },
         "api": {"title": "x", "version": "1", "description": "x"},
         "monitoring": {"enable_prometheus": True, "log_level": "INFO"},
