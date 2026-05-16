@@ -1,4 +1,4 @@
-# NLP Text Classification MLOps Project
+# 🚀 NLP Text Classification MLOps
 
 ![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.115.6-009688?logo=fastapi&logoColor=white)
@@ -17,11 +17,17 @@
 ![Monitoring](https://img.shields.io/badge/Monitoring-Basic%20Setup-4CAF50)
 ![Status](https://img.shields.io/badge/MLOps-Production%20Grade-6A1B9A)
 
-<!-- Optional live workflow badge (replace placeholders):
-[![CI-CD](https://github.com/<your-username>/<your-repo>/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/<your-username>/<your-repo>/actions/workflows/ci-cd.yml)
--->
-
 Production-grade end-to-end MLOps project for NLP text classification (spam detection) with training, tracking, serving, CI/CD, containerization, and monitoring hooks.
+
+---
+
+## 1. Features
+- **Automated Training Pipeline:** From raw CSV to versioned model artifacts.
+- **Experiment Tracking:** Integrated with MLflow for logging parameters, metrics (Accuracy, Precision, Recall, F1), and models.
+- **Robust Inference API:** FastAPI-based service providing predictions with confidence scores.
+- **Real-time Monitoring:** Prometheus metrics and Grafana dashboards for system and model health.
+- **CI/CD Ready:** GitHub Actions for testing and automated model training.
+- **Containerized Deployment:** Docker and Docker Compose support for easy orchestration.
 
 ## 1. Architecture (Text Diagram)
 
@@ -232,6 +238,7 @@ Live deployment:
 ```json
 {
   "prediction": "spam",
+  "confidence": 0.985,
   "model_version": "20260412010101"
 }
 ```
@@ -239,6 +246,10 @@ Live deployment:
 ### `GET /metrics`
 - Prometheus metrics endpoint.
 - Includes request count, latency histogram, and prediction counters.
+
+---
+
+**Tags:** `mlops`, `nlp`, `text-classification`, `fastapi`, `mlflow`, `scikit-learn`, `docker`, `prometheus`, `grafana`, `github-actions`, `cicd`, `machine-learning`, `spam-detection`, `python`
 
 ### 5.1 Quick Live Checks
 
