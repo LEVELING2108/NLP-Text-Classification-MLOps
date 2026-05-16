@@ -7,8 +7,9 @@ import api.main as main_api
 class DummyPipeline:
     metadata = {"model_version": "test-version"}
 
-    def predict(self, text: str) -> str:
-        return "spam" if "win" in text.lower() else "ham"
+    def predict(self, text: str) -> tuple[str, float]:
+        prediction = "spam" if "win" in text.lower() else "ham"
+        return prediction, 0.99
 
 
 @pytest.fixture(autouse=True)
@@ -28,8 +29,10 @@ def test_predict_success(monkeypatch):
     client = TestClient(main_api.app)
     response = client.post("/predict", json={"text": "You WIN big prize"})
     assert response.status_code == 200
-    assert response.json()["prediction"] == "spam"
-    assert response.json()["model_version"] == "test-version"
+    data = response.json()
+    assert data["prediction"] == "spam"
+    assert data["confidence"] == 0.99
+    assert data["model_version"] == "test-version"
 
 
 def test_predict_validation_error():

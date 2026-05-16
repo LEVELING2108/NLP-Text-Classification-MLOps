@@ -83,10 +83,14 @@ def health() -> JSONResponse:
 def predict(payload: PredictionRequest) -> PredictionResponse:
     if pipeline is None:
         raise HTTPException(status_code=503, detail="Model is not loaded. Train model first.")
-    prediction = pipeline.predict(payload.text)
+    prediction, confidence = pipeline.predict(payload.text)
     if PROMETHEUS_ENABLED:
         PREDICTION_COUNT.labels(prediction=prediction).inc()
-    return PredictionResponse(prediction=prediction, model_version=pipeline.metadata["model_version"])
+    return PredictionResponse(
+        prediction=prediction, 
+        confidence=confidence,
+        model_version=pipeline.metadata["model_version"]
+    )
 
 
 @app.get("/metrics")

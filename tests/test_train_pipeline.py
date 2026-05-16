@@ -59,6 +59,8 @@ def test_train_pipeline_end_to_end(tmp_path: Path):
     result = run_train_pipeline(config_file)
     assert "metrics" in result
     assert result["metrics"]["accuracy"] >= 0.0
+    assert "precision" in result["metrics"]
+    assert "recall" in result["metrics"]
     assert Path(result["model_path"]).exists()
     assert Path(result["vectorizer_path"]).exists()
     assert Path(result["metadata_path"]).exists()

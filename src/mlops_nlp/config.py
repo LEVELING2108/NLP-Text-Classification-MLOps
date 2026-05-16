@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 
 import yaml
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class ProjectConfig(BaseModel):
@@ -21,6 +21,7 @@ class DataConfig(BaseModel):
 
 
 class ModelConfig(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
     type: str
     C: float = 1.0
     max_iter: int = 300
@@ -30,6 +31,7 @@ class ModelConfig(BaseModel):
 
 
 class ArtifactConfig(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
     model_dir: str
     model_name: str
     vectorizer_name: str

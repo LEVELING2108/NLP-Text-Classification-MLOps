@@ -18,9 +18,14 @@ class InferencePipeline:
         with open(latest["metadata_path"], "r", encoding="utf-8") as handle:
             self.metadata = json.load(handle)
 
-    def predict(self, text: str) -> str:
+    def predict(self, text: str) -> tuple[str, float]:
         cleaned = clean_text(text)
         features = self.vectorizer.transform([cleaned])
         prediction = self.model.predict(features)[0]
-        return str(prediction)
+        
+        # Get probability/confidence
+        probabilities = self.model.predict_proba(features)[0]
+        confidence = float(max(probabilities))
+        
+        return str(prediction), confidence
 
