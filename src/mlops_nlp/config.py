@@ -49,6 +49,7 @@ class ApiConfig(BaseModel):
     title: str
     version: str
     description: str
+    api_key: str | None = None
 
 
 class MonitoringConfig(BaseModel):
@@ -87,5 +88,9 @@ def load_config(config_path: str | Path = "configs/config.yaml") -> AppConfig:
     enable_prometheus = os.getenv("MLOPS_ENABLE_PROMETHEUS")
     if enable_prometheus is not None:
         config.monitoring.enable_prometheus = _parse_bool(enable_prometheus)
+
+    api_key = os.getenv("MLOPS_API_KEY")
+    if api_key:
+        config.api.api_key = api_key
 
     return config

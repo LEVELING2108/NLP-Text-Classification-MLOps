@@ -3,8 +3,9 @@ from __future__ import annotations
 from contextlib import asynccontextmanager
 from time import perf_counter
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Depends, status
 from fastapi.responses import JSONResponse, PlainTextResponse
+from fastapi.security import APIKeyHeader
 from prometheus_client import CONTENT_TYPE_LATEST, Counter, Histogram, generate_latest
 
 from mlops_nlp.config import load_config
@@ -20,7 +21,19 @@ PREDICTION_COUNT = Counter("prediction_total", "Total inference predictions", ["
 REQUEST_LATENCY = Histogram("request_latency_seconds", "HTTP request latency", ["path", "method"])
 PROMETHEUS_ENABLED = APP_CONFIG.monitoring.enable_prometheus
 
+API_KEY_HEADER = APIKeyHeader(name="X-API-Key", auto_error=False)
+
 pipeline: InferencePipeline | None = None
+
+
+def get_api_key(api_key_header: str = Depends(API_KEY_HEADER)):
+    if APP_CONFIG.api.api_key:
+        if api_key_header != APP_CONFIG.api.api_key:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Could not validate credentials",
+            )
+    return api_key_header
 
 
 @asynccontextmanager
@@ -81,7 +94,10 @@ def health() -> JSONResponse:
 
 
 @app.post("/predict", response_model=PredictionResponse)
-def predict(payload: PredictionRequest) -> PredictionResponse:
+def predict(
+    payload: PredictionRequest, 
+    _api_key: str = Depends(get_api_key)
+) -> PredictionResponse:
     if pipeline is None:
         raise HTTPException(status_code=503, detail="Model is not loaded. Train model first.")
     prediction, confidence = pipeline.predict(payload.text)
