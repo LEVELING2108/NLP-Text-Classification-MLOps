@@ -29,3 +29,14 @@ class InferencePipeline:
         
         return str(prediction), confidence
 
+    def predict_batch(self, texts: list[str]) -> list[tuple[str, float]]:
+        cleaned_texts = [clean_text(t) for t in texts]
+        features = self.vectorizer.transform(cleaned_texts)
+        predictions = self.model.predict(features)
+        probabilities = self.model.predict_proba(features)
+        
+        results = []
+        for pred, proba in zip(predictions, probabilities):
+            results.append((str(pred), float(max(proba))))
+        return results
+
