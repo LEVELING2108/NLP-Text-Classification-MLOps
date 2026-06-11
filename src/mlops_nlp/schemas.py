@@ -13,3 +13,12 @@ class PredictionResponse(BaseModel):
     confidence: float
     model_version: str
 
+
+class BatchPredictionRequest(BaseModel):
+    texts: list[str] = Field(..., min_length=1, max_length=100)
+
+
+class BatchPredictionResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    predictions: list[PredictionResponse]
+

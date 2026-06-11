@@ -11,7 +11,7 @@ from prometheus_client import CONTENT_TYPE_LATEST, Counter, Histogram, generate_
 from mlops_nlp.config import load_config
 from mlops_nlp.logging_config import configure_logging, get_logger
 from mlops_nlp.pipelines.inference_pipeline import InferencePipeline
-from mlops_nlp.schemas import PredictionRequest, PredictionResponse
+from mlops_nlp.schemas import PredictionRequest, PredictionResponse, BatchPredictionRequest, BatchPredictionResponse
 from mlops_nlp.utils.drift import log_inference
 
 APP_CONFIG = load_config()
@@ -66,6 +66,7 @@ def root() -> JSONResponse:
             "docs": "/docs",
             "health": "/health",
             "predict": "/predict",
+            "predict_batch": "/predict/batch",
             "metrics": "/metrics" if PROMETHEUS_ENABLED else "disabled",
         }
     )
@@ -118,6 +119,41 @@ def predict(
         confidence=confidence,
         model_version=pipeline.metadata["model_version"]
     )
+
+
+@app.post("/predict/batch", response_model=BatchPredictionResponse)
+def predict_batch(
+    payload: BatchPredictionRequest, 
+    _api_key: str = Depends(get_api_key)
+) -> BatchPredictionResponse:
+    if pipeline is None:
+        raise HTTPException(status_code=503, detail="Model is not loaded. Train model first.")
+    
+    results = pipeline.predict_batch(payload.texts)
+    responses = []
+    
+    for text, (prediction, confidence) in zip(payload.texts, results):
+        if PROMETHEUS_ENABLED:
+            PREDICTION_COUNT.labels(prediction=prediction).inc()
+        
+        # Log for drift detection
+        log_inference(
+            log_path=APP_CONFIG.monitoring.inference_log_path,
+            text=text,
+            prediction=prediction,
+            confidence=confidence,
+            model_version=pipeline.metadata["model_version"],
+        )
+        
+        responses.append(
+            PredictionResponse(
+                prediction=prediction,
+                confidence=confidence,
+                model_version=pipeline.metadata["model_version"]
+            )
+        )
+    
+    return BatchPredictionResponse(predictions=responses)
 
 
 @app.get("/metrics")
